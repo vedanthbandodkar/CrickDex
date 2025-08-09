@@ -1,6 +1,18 @@
 import React from 'react';
 import { TrendingUp, Target, Award, Activity } from 'lucide-react';
-import { Player } from '../lib/supabase';
+
+interface Player {
+  id: number;
+  name: string;
+  country: string;
+  role: string;
+  matches: number;
+  runs: number;
+  average: number;
+  hundreds?: number;
+  wickets?: number;
+  image: string;
+}
 
 interface ComparisonToolProps {
   player1: Player | null;
@@ -20,7 +32,7 @@ const ComparisonTool: React.FC<ComparisonToolProps> = ({ player1, player2 }) => 
     <div className={`bg-white rounded-xl shadow-lg p-6 ${isLeft ? 'text-left' : 'text-right'}`}>
       <div className={`flex items-center gap-4 mb-6 ${isLeft ? '' : 'flex-row-reverse'}`}>
         <img
-          src={player.image_url}
+          src={player.image}
           alt={player.name}
           className="w-16 h-16 rounded-full object-cover"
         />

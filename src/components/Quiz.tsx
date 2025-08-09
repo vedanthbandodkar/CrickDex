@@ -1,58 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, RotateCcw, Trophy } from 'lucide-react';
-import { useQuiz } from '../hooks/useQuiz';
-import { useAuth } from '../hooks/useAuth';
+import { quizData } from '../data/quizData';
+
+interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
 
 const Quiz: React.FC = () => {
-  const { questions, loading: questionsLoading, saveQuizScore, getBestScore } = useQuiz();
-  const { user } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
-    new Array(questions.length).fill(false)
+    new Array(quizData.length).fill(false)
   );
-  const [bestScore, setBestScore] = useState<number | null>(null);
 
   useEffect(() => {
-    if (questions.length > 0) {
-      setAnsweredQuestions(new Array(questions.length).fill(false));
+    // Load saved quiz score from localStorage
+    const savedScore = localStorage.getItem('cricket-quiz-best-score');
+    if (savedScore) {
+      console.log('Best score:', savedScore);
     }
-  }, [questions]);
-
-  useEffect(() => {
-    if (user) {
-      loadBestScore();
-    }
-  }, [user]);
-
-  const loadBestScore = async () => {
-    const best = await getBestScore();
-    setBestScore(best?.score || null);
-  };
-
-  if (questionsLoading) {
-    return (
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading quiz questions...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <p className="text-gray-600">No quiz questions available.</p>
-        </div>
-      </div>
-    );
-  }
+  }, []);
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (answeredQuestions[currentQuestion]) return;
@@ -64,25 +38,22 @@ const Quiz: React.FC = () => {
     newAnsweredQuestions[currentQuestion] = true;
     setAnsweredQuestions(newAnsweredQuestions);
 
-    if (answerIndex === questions[currentQuestion].correct_answer) {
+    if (answerIndex === quizData[currentQuestion].correctAnswer) {
       setScore(score + 1);
     }
   };
 
-  const nextQuestion = async () => {
-    if (currentQuestion < questions.length - 1) {
+  const nextQuestion = () => {
+    if (currentQuestion < quizData.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
       setQuizCompleted(true);
-      
-      // Save score to database if user is authenticated
-      if (user) {
-        await saveQuizScore(score, questions.length);
-        if (!bestScore || score > bestScore) {
-          setBestScore(score);
-        }
+      // Save best score to localStorage
+      const bestScore = localStorage.getItem('cricket-quiz-best-score');
+      if (!bestScore || score > parseInt(bestScore)) {
+        localStorage.setItem('cricket-quiz-best-score', score.toString());
       }
     }
   };
@@ -93,11 +64,12 @@ const Quiz: React.FC = () => {
     setShowResult(false);
     setScore(0);
     setQuizCompleted(false);
-    setAnsweredQuestions(new Array(questions.length).fill(false));
+    setAnsweredQuestions(new Array(quizData.length).fill(false));
   };
 
   if (quizCompleted) {
-    const percentage = Math.round((score / questions.length) * 100);
+    const percentage = Math.round((score / quizData.length) * 100);
+    const bestScore = localStorage.getItem('cricket-quiz-best-score');
     
     return (
       <div className="max-w-2xl mx-auto text-center">
@@ -105,14 +77,14 @@ const Quiz: React.FC = () => {
           <div className="mb-6">
             <Trophy size={64} className="mx-auto text-yellow-500 mb-4" />
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Quiz Completed!</h2>
-            <div className="text-6xl font-bold text-green-600 mb-2">{score}/{questions.length}</div>
+            <div className="text-6xl font-bold text-green-600 mb-2">{score}/{quizData.length}</div>
             <div className="text-xl text-gray-600 mb-4">{percentage}% Correct</div>
             
-            {bestScore !== null && (
+            {bestScore && (
               <div className="inline-flex items-center px-4 py-2 bg-yellow-50 rounded-lg">
                 <Trophy size={16} className="text-yellow-500 mr-2" />
                 <span className="text-sm text-yellow-700">
-                  Best Score: {bestScore}/{questions.length}
+                  Best Score: {bestScore}/{quizData.length}
                 </span>
               </div>
             )}
@@ -130,8 +102,8 @@ const Quiz: React.FC = () => {
     );
   }
 
-  const question = questions[currentQuestion];
-  const isCorrect = selectedAnswer === question.correct_answer;
+  const question = quizData[currentQuestion];
+  const isCorrect = selectedAnswer === question.correctAnswer;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -139,14 +111,14 @@ const Quiz: React.FC = () => {
         <div className="bg-green-600 text-white p-4">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">
-              Question {currentQuestion + 1} of {questions.length}
+              Question {currentQuestion + 1} of {quizData.length}
             </span>
-            <span className="text-sm font-medium">Score: {score}/{questions.length}</span>
+            <span className="text-sm font-medium">Score: {score}/{quizData.length}</span>
           </div>
           <div className="w-full bg-green-500 rounded-full h-2 mt-2">
             <div
               className="bg-white h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              style={{ width: `${((currentQuestion + 1) / quizData.length) * 100}%` }}
             ></div>
           </div>
         </div>
@@ -163,9 +135,9 @@ const Quiz: React.FC = () => {
               if (!showResult) {
                 buttonClass += "border-gray-200 hover:border-green-300 hover:bg-green-50";
               } else {
-                if (index === question.correct_answer) {
+                if (index === question.correctAnswer) {
                   buttonClass += "border-green-500 bg-green-50 text-green-800";
-                } else if (index === selectedAnswer && selectedAnswer !== question.correct_answer) {
+                } else if (index === selectedAnswer && selectedAnswer !== question.correctAnswer) {
                   buttonClass += "border-red-500 bg-red-50 text-red-800";
                 } else {
                   buttonClass += "border-gray-200 bg-gray-50 text-gray-600";
@@ -183,10 +155,10 @@ const Quiz: React.FC = () => {
                     <span>{option}</span>
                     {showResult && (
                       <span>
-                        {index === question.correct_answer && (
+                        {index === question.correctAnswer && (
                           <CheckCircle size={20} className="text-green-600" />
                         )}
-                        {index === selectedAnswer && selectedAnswer !== question.correct_answer && (
+                        {index === selectedAnswer && selectedAnswer !== question.correctAnswer && (
                           <XCircle size={20} className="text-red-600" />
                         )}
                       </span>
@@ -222,7 +194,7 @@ const Quiz: React.FC = () => {
                 onClick={nextQuestion}
                 className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
-                {currentQuestion < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+                {currentQuestion < quizData.length - 1 ? 'Next Question' : 'Finish Quiz'}
               </button>
             </div>
           )}

@@ -2,50 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, HeartOff } from 'lucide-react';
 import PlayerDetails from '../components/PlayerDetails';
-import { usePlayers } from '../hooks/usePlayers';
-import { useFavorites } from '../hooks/useFavorites';
-import { useAuth } from '../hooks/useAuth';
+import playersData from '../data/players.json';
 
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getPlayerById, loading: playersLoading } = usePlayers();
-  const { isFavorite, addFavorite, removeFavorite, loading: favoritesLoading } = useFavorites();
-  const { user } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const player = getPlayerById(id || '');
+  const player = playersData.find(p => p.id === parseInt(id || '0'));
 
-  const toggleFavorite = async () => {
+  useEffect(() => {
+    if (player) {
+      const favorites = JSON.parse(localStorage.getItem('cricket-favorites') || '[]');
+      setIsFavorite(favorites.includes(player.id));
+    }
+  }, [player]);
+
+  const toggleFavorite = () => {
     if (!player) return;
 
-    if (isFavorite(player.id)) {
-      await removeFavorite(player.id);
-    } else {
-      await addFavorite(player.id);
-    }
-  };
+    const favorites = JSON.parse(localStorage.getItem('cricket-favorites') || '[]');
+    let updatedFavorites;
 
-  if (playersLoading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
-          <div className="md:flex">
-            <div className="md:w-1/3">
-              <div className="w-full h-64 md:h-96 bg-gray-300"></div>
-            </div>
-            <div className="md:w-2/3 p-6">
-              <div className="h-8 bg-gray-300 rounded mb-4 w-3/4"></div>
-              <div className="h-4 bg-gray-300 rounded mb-6 w-1/2"></div>
-              <div className="space-y-4">
-                <div className="h-4 bg-gray-300 rounded w-full"></div>
-                <div className="h-4 bg-gray-300 rounded w-2/3"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    if (isFavorite) {
+      updatedFavorites = favorites.filter((favId: number) => favId !== player.id);
+    } else {
+      updatedFavorites = [...favorites, player.id];
+    }
+
+    localStorage.setItem('cricket-favorites', JSON.stringify(updatedFavorites));
+    setIsFavorite(!isFavorite);
+  };
 
   if (!player) {
     return (
@@ -77,29 +63,26 @@ const PlayerProfile: React.FC = () => {
           Back to Players
         </Link>
 
-        {user && (
-          <button
-            onClick={toggleFavorite}
-            disabled={favoritesLoading}
-            className={`inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all ${
-              isFavorite(player.id)
-                ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                : 'bg-green-50 text-green-600 hover:bg-green-100'
-            } ${favoritesLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {isFavorite(player.id) ? (
-              <>
-                <HeartOff size={20} className="mr-2" />
-                Remove from Favorites
-              </>
-            ) : (
-              <>
-                <Heart size={20} className="mr-2" />
-                Add to Favorites
-              </>
-            )}
-          </button>
-        )}
+        <button
+          onClick={toggleFavorite}
+          className={`inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all ${
+            isFavorite
+              ? 'bg-red-50 text-red-600 hover:bg-red-100'
+              : 'bg-green-50 text-green-600 hover:bg-green-100'
+          }`}
+        >
+          {isFavorite ? (
+            <>
+              <HeartOff size={20} className="mr-2" />
+              Remove from Favorites
+            </>
+          ) : (
+            <>
+              <Heart size={20} className="mr-2" />
+              Add to Favorites
+            </>
+          )}
+        </button>
       </div>
 
       <PlayerDetails player={player} />

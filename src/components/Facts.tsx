@@ -1,50 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Lightbulb } from 'lucide-react';
-import { useFacts } from '../hooks/useFacts';
+import factsData from '../data/facts.json';
 
 const Facts: React.FC = () => {
-  const { facts, loading, getRandomFact } = useFacts();
-  const [currentFact, setCurrentFact] = useState<string>('');
-  const [previousFactId, setPreviousFactId] = useState<string>('');
+  const [currentFact, setCurrentFact] = useState('');
+  const [previousFact, setPreviousFact] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGetRandomFact = () => {
+  const getRandomFact = () => {
     setIsLoading(true);
     
-    const randomFact = getRandomFact(previousFactId);
+    // Filter out the previous fact to avoid repetition
+    const availableFacts = factsData.filter(fact => fact !== previousFact);
+    const randomIndex = Math.floor(Math.random() * availableFacts.length);
+    const newFact = availableFacts[randomIndex];
     
     // Simulate loading for better UX
     setTimeout(() => {
-      if (randomFact) {
-        setPreviousFactId(randomFact.id);
-        setCurrentFact(randomFact.fact);
-      }
+      setPreviousFact(currentFact);
+      setCurrentFact(newFact);
       setIsLoading(false);
     }, 300);
   };
 
   useEffect(() => {
-    if (facts.length > 0 && !currentFact) {
-      handleGetRandomFact();
-    }
-  }, [facts]);
-
-  if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
-            <Lightbulb size={32} className="text-yellow-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Cricket Facts</h1>
-          <p className="text-gray-600">Loading amazing cricket facts...</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
+    // Load initial fact
+    getRandomFact();
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -73,7 +55,7 @@ const Facts: React.FC = () => {
 
           <div className="text-center mt-8">
             <button
-              onClick={handleGetRandomFact}
+              onClick={getRandomFact}
               disabled={isLoading}
               className={`inline-flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
                 isLoading
@@ -92,7 +74,7 @@ const Facts: React.FC = () => {
         <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-lg">
           <Lightbulb size={16} className="text-blue-500 mr-2" />
           <span className="text-sm text-blue-700">
-            Total facts available: {facts.length}
+            Total facts available: {factsData.length}
           </span>
         </div>
       </div>

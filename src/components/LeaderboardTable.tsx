@@ -1,7 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Target, MapPin } from 'lucide-react';
-import { Player } from '../lib/supabase';
+
+interface Player {
+  id: number;
+  name: string;
+  country: string;
+  runs: number;
+  wickets?: number;
+  average: number;
+  image: string;
+}
 
 interface LeaderboardTableProps {
   players: Player[];
@@ -67,7 +76,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ players, sortBy }) 
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Link to={`/player/${player.id}`} className="flex items-center group">
                     <img
-                      src={player.image_url}
+                      src={player.image}
                       alt={player.name}
                       className="w-10 h-10 rounded-full object-cover mr-3"
                     />

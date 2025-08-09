@@ -1,6 +1,20 @@
 import React from 'react';
 import { MapPin, Activity, TrendingUp, Award, Target } from 'lucide-react';
-import { Player } from '../lib/supabase';
+
+interface Player {
+  id: number;
+  name: string;
+  country: string;
+  role: string;
+  battingStyle: string;
+  bowlingStyle: string;
+  matches: number;
+  runs: number;
+  average: number;
+  hundreds?: number;
+  wickets?: number;
+  image: string;
+}
 
 interface PlayerDetailsProps {
   player: Player;
@@ -12,7 +26,7 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({ player }) => {
       <div className="md:flex">
         <div className="md:w-1/3">
           <img
-            src={player.image_url}
+            src={player.image}
             alt={player.name}
             className="w-full h-64 md:h-full object-cover"
           />
@@ -39,11 +53,11 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({ player }) => {
               <div className="space-y-2">
                 <div className="flex items-center">
                   <Activity size={16} className="mr-2 text-blue-500" />
-                  <span className="text-gray-900">Batting: {player.batting_style}</span>
+                  <span className="text-gray-900">Batting: {player.battingStyle}</span>
                 </div>
                 <div className="flex items-center">
                   <Target size={16} className="mr-2 text-red-500" />
-                  <span className="text-gray-900">Bowling: {player.bowling_style}</span>
+                  <span className="text-gray-900">Bowling: {player.bowlingStyle}</span>
                 </div>
               </div>
             </div>
@@ -58,7 +72,7 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({ player }) => {
                   <div className="text-sm text-gray-500">Matches</div>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{player.runs.toLocaleString()}</div>
+                  <div className="text-2xl font-bold text-blue-600">{player.runs}</div>
                   <div className="text-sm text-gray-500">Runs</div>
                 </div>
               </div>

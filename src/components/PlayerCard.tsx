@@ -1,7 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, User } from 'lucide-react';
-import { Player } from '../lib/supabase';
+
+interface Player {
+  id: number;
+  name: string;
+  country: string;
+  role: string;
+  image: string;
+  runs?: number;
+  wickets?: number;
+}
 
 interface PlayerCardProps {
   player: Player;
@@ -30,7 +39,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
     >
       <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
         <img
-          src={player.image_url}
+          src={player.image}
           alt={player.name}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -54,7 +63,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
         <div className="flex justify-between items-center text-sm">
           {player.runs !== undefined && (
             <div className="text-center">
-              <div className="text-lg font-semibold text-green-600">{player.runs.toLocaleString()}</div>
+              <div className="text-lg font-semibold text-green-600">{player.runs}</div>
               <div className="text-gray-500">Runs</div>
             </div>
           )}
