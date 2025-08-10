@@ -1,25 +1,7 @@
 import React from 'react';
 import { TrendingUp, Target, Award, Activity } from 'lucide-react';
 
-interface Player {
-  id: number;
-  name: string;
-  country: string;
-  role: string;
-  matches: number;
-  runs: number;
-  average: number;
-  hundreds?: number;
-  wickets?: number;
-  image: string;
-}
-
-interface ComparisonToolProps {
-  player1: Player | null;
-  player2: Player | null;
-}
-
-const ComparisonTool: React.FC<ComparisonToolProps> = ({ player1, player2 }) => {
+const ComparisonTool = ({ player1, player2 }) => {
   if (!player1 || !player2) {
     return (
       <div className="text-center py-12">
@@ -28,7 +10,7 @@ const ComparisonTool: React.FC<ComparisonToolProps> = ({ player1, player2 }) => 
     );
   }
 
-  const ComparisonCard: React.FC<{ player: Player; isLeft?: boolean }> = ({ player, isLeft }) => (
+  const ComparisonCard = ({ player, isLeft = false }) => (
     <div className={`bg-white rounded-xl shadow-lg p-6 ${isLeft ? 'text-left' : 'text-right'}`}>
       <div className={`flex items-center gap-4 mb-6 ${isLeft ? '' : 'flex-row-reverse'}`}>
         <img

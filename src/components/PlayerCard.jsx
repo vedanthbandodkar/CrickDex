@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, User } from 'lucide-react';
+import { MapPin, User, Wifi, WifiOff, TrendingUp } from 'lucide-react';
+import { useCricketData } from '../hooks/useCricketData';
 
-interface Player {
-  id: number;
-  name: string;
-  country: string;
-  role: string;
-  image: string;
-  runs?: number;
-  wickets?: number;
-}
+const PlayerCard = ({ player, showLiveData = false }) => {
+  const [liveStats, setLiveStats] = useState(null);
+  const [hasRealTimeData, setHasRealTimeData] = useState(false);
 
-interface PlayerCardProps {
-  player: Player;
-}
+  // Try to get real-time player information if enabled
+  const { data: playerInfo, loading: playerLoading, error: playerError } = 
+    showLiveData ? useCricketData.usePlayerInfo(player?.name) : { data: null, loading: false, error: null };
 
-const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
-  const getRoleBadgeColor = (role: string) => {
+  useEffect(() => {
+    if (playerInfo && !playerError && showLiveData) {
+      setLiveStats(playerInfo);
+      setHasRealTimeData(true);
+    } else {
+      setHasRealTimeData(false);
+    }
+  }, [playerInfo, playerError, showLiveData]);
+
+  const getRoleBadgeColor = (role) => {
     switch (role) {
       case 'Batsman':
         return 'bg-blue-100 text-blue-800';
@@ -43,10 +46,27 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
           alt={player.name}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex items-center space-x-2">
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(player.role)}`}>
             {player.role}
           </span>
+          {showLiveData && (
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              hasRealTimeData ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            }`}>
+              {hasRealTimeData ? (
+                <>
+                  <Wifi size={10} className="mr-1" />
+                  Live
+                </>
+              ) : (
+                <>
+                  <WifiOff size={10} className="mr-1" />
+                  Static
+                </>
+              )}
+            </span>
+          )}
         </div>
       </div>
       

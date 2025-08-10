@@ -1,7 +1,7 @@
 import React from 'react';
-import Facts from '../components/Facts';
+import Facts from '../components/Facts.jsx';
 
-const FactsPage: React.FC = () => {
+const FactsPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Facts />

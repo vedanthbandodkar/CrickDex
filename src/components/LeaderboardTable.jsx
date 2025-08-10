@@ -2,22 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Target, MapPin } from 'lucide-react';
 
-interface Player {
-  id: number;
-  name: string;
-  country: string;
-  runs: number;
-  wickets?: number;
-  average: number;
-  image: string;
-}
-
-interface LeaderboardTableProps {
-  players: Player[];
-  sortBy: 'runs' | 'wickets';
-}
-
-const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ players, sortBy }) => {
+const LeaderboardTable = ({ players, sortBy }) => {
   const sortedPlayers = [...players].sort((a, b) => {
     if (sortBy === 'runs') {
       return b.runs - a.runs;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { TrendingUp, Target } from 'lucide-react';
-import LeaderboardTable from '../components/LeaderboardTable';
+import LeaderboardTable from '../components/LeaderboardTable.jsx';
 import playersData from '../data/players.json';
 
-const Leaderboards: React.FC = () => {
-  const [sortBy, setSortBy] = useState<'runs' | 'wickets'>('runs');
+const Leaderboards = () => {
+  const [sortBy, setSortBy] = useState('runs');
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

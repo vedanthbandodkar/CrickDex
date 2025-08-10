@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import PlayerProfile from './pages/PlayerProfile';
-import Leaderboards from './pages/Leaderboards';
-import Compare from './pages/Compare';
-import QuizPage from './pages/QuizPage';
-import FactsPage from './pages/FactsPage';
+import Navbar from './components/Navbar.jsx';
+import Home from './pages/Home.jsx';
+import PlayerProfile from './pages/PlayerProfile.jsx';
+import Leaderboards from './pages/Leaderboards.jsx';
+import Compare from './pages/Compare.jsx';
+import QuizPage from './pages/QuizPage.jsx';
+import FactsPage from './pages/FactsPage.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/compare" element={<Compare />} />
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/facts" element={<FactsPage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
       </div>

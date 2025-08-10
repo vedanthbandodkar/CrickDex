@@ -1,26 +1,7 @@
 import React from 'react';
-import { MapPin, Activity, TrendingUp, Award, Target } from 'lucide-react';
+import { MapPin, Activity, TrendingUp, Award, Target, Wifi, WifiOff } from 'lucide-react';
 
-interface Player {
-  id: number;
-  name: string;
-  country: string;
-  role: string;
-  battingStyle: string;
-  bowlingStyle: string;
-  matches: number;
-  runs: number;
-  average: number;
-  hundreds?: number;
-  wickets?: number;
-  image: string;
-}
-
-interface PlayerDetailsProps {
-  player: Player;
-}
-
-const PlayerDetails: React.FC<PlayerDetailsProps> = ({ player }) => {
+const PlayerDetails = ({ player, showLiveData, realTimeStats }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
       <div className="md:flex">
@@ -38,6 +19,12 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({ player }) => {
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
               {player.role}
             </span>
+            {showLiveData && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <Wifi size={12} className="mr-1" />
+                Live
+              </span>
+            )}
           </div>
 
           <div className="flex items-center text-gray-600 mb-6">

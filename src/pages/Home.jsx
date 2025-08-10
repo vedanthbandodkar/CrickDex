@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import SearchBar from '../components/SearchBar';
-import PlayerCard from '../components/PlayerCard';
+import { Wifi } from 'lucide-react';
+import SearchBar from '../components/SearchBar.jsx';
+import PlayerCard from '../components/PlayerCard.jsx';
+import LiveMatchesWidget from '../components/LiveMatchesWidget.jsx';
+import LiveSeriesWidget from '../components/LiveRankingsWidget.jsx';
 import playersData from '../data/players.json';
 
-const Home: React.FC = () => {
+const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPlayers = useMemo(() => {
@@ -25,10 +28,17 @@ const Home: React.FC = () => {
         </p>
       </div>
 
+      {/* Live Data Section */}
+      <div className="grid lg:grid-cols-2 gap-6 mb-12">
+        <LiveMatchesWidget />
+        <LiveSeriesWidget />
+      </div>
+
       <SearchBar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         placeholder="Search by player name, country, or role..."
+        enableRealTimeSearch={true}
       />
 
       {filteredPlayers.length === 0 ? (
@@ -43,11 +53,19 @@ const Home: React.FC = () => {
             <p className="text-gray-600">
               Showing {filteredPlayers.length} of {playersData.length} players
             </p>
+            <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+              <Wifi size={14} className="mr-1" />
+              Enhanced with Live Data
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredPlayers.map((player) => (
-              <PlayerCard key={player.id} player={player} />
+              <PlayerCard 
+                key={player.id} 
+                player={player} 
+                showLiveData={true}
+              />
             ))}
           </div>
         </>

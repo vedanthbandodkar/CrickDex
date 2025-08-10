@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Trophy, Users, BookOpen, Lightbulb } from 'lucide-react';
+import { Home, Trophy, Users, BookOpen, Lightbulb, Settings } from 'lucide-react';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const location = useLocation();
 
   const navItems = [
@@ -11,6 +11,7 @@ const Navbar: React.FC = () => {
     { path: '/compare', label: 'Compare', icon: Users },
     { path: '/quiz', label: 'Quiz', icon: BookOpen },
     { path: '/facts', label: 'Facts', icon: Lightbulb },
+    { path: '/admin', label: 'Admin', icon: Settings },
   ];
 
   return (

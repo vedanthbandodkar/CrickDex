@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Users } from 'lucide-react';
-import ComparisonTool from '../components/ComparisonTool';
+import ComparisonTool from '../components/ComparisonTool.jsx';
 import playersData from '../data/players.json';
 
-const Compare: React.FC = () => {
-  const [player1Id, setPlayer1Id] = useState<string>('');
-  const [player2Id, setPlayer2Id] = useState<string>('');
+const Compare = () => {
+  const [player1Id, setPlayer1Id] = useState('');
+  const [player2Id, setPlayer2Id] = useState('');
 
   const player1 = playersData.find(p => p.id === parseInt(player1Id));
   const player2 = playersData.find(p => p.id === parseInt(player2Id));

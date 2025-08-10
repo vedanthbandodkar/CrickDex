@@ -1,8 +1,8 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import Quiz from '../components/Quiz';
+import Quiz from '../components/Quiz.jsx';
 
-const QuizPage: React.FC = () => {
+const QuizPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
