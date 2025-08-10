@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, RotateCcw, Trophy, Wifi, WifiOff, Loader, AlertCircle } from 'lucide-react';
 import { quizData } from '../data/quizData';
-import { useCricketData } from '../hooks/useCricketData';
+import useCricketData from '../hooks/useCricketData';
 
 const Quiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);

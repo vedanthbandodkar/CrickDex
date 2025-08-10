@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Wifi, Users, Loader } from 'lucide-react';
-import { useCricketData } from '../hooks/useCricketData';
+import useCricketData from '../hooks/useCricketData';
 
 const SearchBar = ({ 
   searchTerm, 

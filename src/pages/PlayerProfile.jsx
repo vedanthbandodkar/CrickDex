@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, HeartOff, Loader, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import PlayerDetails from '../components/PlayerDetails.jsx';
 import playersData from '../data/players.json';
-import { useCricketData } from '../hooks/useCricketData';
+import useCricketData from '../hooks/useCricketData';
 
 const PlayerProfile = () => {
   const { id } = useParams();

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import cricketDataService from '../services/CricketDataService.js';
 
-// Custom hook for fetching live cricket data (FREE TIER OPTIMIZED)
-export const useLiveMatches = (refreshInterval = 120000) => { // 2 minutes default for free tier
+// Custom hook for fetching live cricket data
+export const useLiveMatches = (refreshInterval = 120000) => {
   const [liveMatches, setLiveMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,20 +25,11 @@ export const useLiveMatches = (refreshInterval = 120000) => { // 2 minutes defau
 
   useEffect(() => {
     fetchLiveMatches();
-    
-    // Set up auto-refresh
     const interval = setInterval(fetchLiveMatches, refreshInterval);
-    
     return () => clearInterval(interval);
   }, [fetchLiveMatches, refreshInterval]);
 
-  return {
-    liveMatches,
-    loading,
-    error,
-    lastUpdated,
-    refresh: fetchLiveMatches
-  };
+  return { liveMatches, loading, error, lastUpdated, refresh: fetchLiveMatches };
 };
 
 // Custom hook for fetching player statistics
@@ -49,7 +40,7 @@ export const usePlayerStats = (playerId) => {
 
   const fetchPlayerStats = useCallback(async () => {
     if (!playerId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -67,12 +58,7 @@ export const usePlayerStats = (playerId) => {
     fetchPlayerStats();
   }, [fetchPlayerStats]);
 
-  return {
-    playerStats,
-    loading,
-    error,
-    refresh: fetchPlayerStats
-  };
+  return { playerStats, loading, error, refresh: fetchPlayerStats };
 };
 
 // Custom hook for fetching rankings
@@ -99,12 +85,7 @@ export const useRankings = (format = 'odi') => {
     fetchRankings();
   }, [fetchRankings]);
 
-  return {
-    rankings,
-    loading,
-    error,
-    refresh: fetchRankings
-  };
+  return { rankings, loading, error, refresh: fetchRankings };
 };
 
 // Custom hook for fetching recent matches
@@ -131,12 +112,66 @@ export const useRecentMatches = () => {
     fetchRecentMatches();
   }, [fetchRecentMatches]);
 
-  return {
-    recentMatches,
-    loading,
-    error,
-    refresh: fetchRecentMatches
-  };
+  return { recentMatches, loading, error, refresh: fetchRecentMatches };
+};
+
+// Custom hook for fetching player information
+export const usePlayerInfo = (playerName) => {
+  const [playerInfo, setPlayerInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchPlayerInfo = useCallback(async () => {
+    if (!playerName) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await cricketDataService.searchPlayer(playerName);
+      setPlayerInfo(response.data[0] || null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [playerName]);
+
+  useEffect(() => {
+    fetchPlayerInfo();
+  }, [fetchPlayerInfo]);
+
+  return { data: playerInfo, loading, error, refresh: fetchPlayerInfo };
+};
+
+// Custom hook for player search with suggestions
+export const usePlayerSearch = (searchTerm) => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const searchPlayers = useCallback(async () => {
+    if (!searchTerm || searchTerm.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await cricketDataService.searchPlayer(searchTerm);
+      setSearchResults(response.data.slice(0, 5));
+    } catch (err) {
+      setError(err.message);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const debounceTimeout = setTimeout(searchPlayers, 300);
+    return () => clearTimeout(debounceTimeout);
+  }, [searchPlayers]);
+
+  return { data: searchResults, loading, error };
 };
 
 // Custom hook for API health monitoring
@@ -160,10 +195,18 @@ export const useAPIHealth = () => {
     return cricketDataService.getUsageStats();
   }, []);
 
-  return {
-    healthStatus,
-    loading,
-    checkHealth,
-    getUsageStats
-  };
+  return { healthStatus, loading, checkHealth, getUsageStats };
 };
+
+// Default export object containing all hooks
+const useCricketData = {
+  useLiveMatches,
+  usePlayerStats,
+  useRankings,
+  useRecentMatches,
+  usePlayerInfo,
+  usePlayerSearch,
+  useAPIHealth
+};
+
+export default useCricketData;

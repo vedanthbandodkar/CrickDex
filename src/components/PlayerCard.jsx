@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, User, Wifi, WifiOff, TrendingUp } from 'lucide-react';
-import { useCricketData } from '../hooks/useCricketData';
+import useCricketData from '../hooks/useCricketData';
 
 const PlayerCard = ({ player, showLiveData = false }) => {
   const [liveStats, setLiveStats] = useState(null);

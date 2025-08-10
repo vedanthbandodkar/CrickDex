@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Lightbulb, Wifi, WifiOff, Clock, TrendingUp, Users } from 'lucide-react';
 import factsData from '../data/facts.json';
-import { useCricketData } from '../hooks/useCricketData';
+import useCricketData from '../hooks/useCricketData';
 
 const Facts = () => {
   const [currentFact, setCurrentFact] = useState('');

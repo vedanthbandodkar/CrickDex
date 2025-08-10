@@ -1,9 +1,9 @@
 import React from 'react';
-import { useLiveMatches } from '../hooks/useCricketData.js';
+import useCricketData from '../hooks/useCricketData.js';
 import { Clock, Wifi, AlertCircle, RefreshCw } from 'lucide-react';
 
 const LiveMatchesWidget = () => {
-  const { liveMatches, loading, error, lastUpdated, refresh } = useLiveMatches(30000);
+  const { liveMatches, loading, error, lastUpdated, refresh } = useCricketData.useLiveMatches(30000);
 
   if (loading && !liveMatches.length) {
     return (

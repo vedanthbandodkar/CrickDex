@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAPIHealth } from '../hooks/useCricketData.js';
+import useCricketData from '../hooks/useCricketData.js';
 import { Activity, CheckCircle, XCircle, Clock, Key, Database } from 'lucide-react';
 
 const APIStatusDashboard = () => {
-  const { healthStatus, loading, checkHealth, getUsageStats } = useAPIHealth();
+  const { healthStatus, loading, checkHealth, getUsageStats } = useCricketData.useAPIHealth();
   const [showDetails, setShowDetails] = useState(false);
   const [usageStats, setUsageStats] = useState(null);
 

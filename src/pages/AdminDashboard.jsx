@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import APIStatusDashboard from '../components/APIStatusDashboard.jsx';
 import APIIntegrationSummary from '../components/APIIntegrationSummary.jsx';
-import { useRecentMatches } from '../hooks/useCricketData.js';
+import useCricketData from '../hooks/useCricketData.js';
 import { Settings, Database, Activity, Calendar } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { recentMatches, loading, error, refresh } = useRecentMatches();
+  const { recentMatches, loading, error, refresh } = useCricketData.useRecentMatches();
   const [activeTab, setActiveTab] = useState('status');
 
   const tabs = [
